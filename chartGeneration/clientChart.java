@@ -2,14 +2,8 @@ package chartGeneration;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.border.MatteBorder;
-import javax.swing.plaf.TableHeaderUI;
-import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.plaf.basic.BasicPanelUI;
-import javax.swing.plaf.metal.MetalBorders.TableHeaderBorder;
-
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -18,12 +12,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumnModel;
-import javax.swing.text.AttributeSet.ColorAttribute;
-
 import PatientManagement.PatientAdmissionUI;
 import PatientManagement.patient;
-import users.*;
 import security.*;
 import java.lang.Object;
 import java.util.HashMap;
@@ -31,7 +21,6 @@ import java.util.Map;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.font.*;
 import java.awt.Font;
 

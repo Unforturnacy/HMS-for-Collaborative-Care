@@ -1,8 +1,5 @@
 package chartGeneration;
-
-
 import java.util.ArrayList;
-
 import PatientManagement.patient;
 import Storage.DatabaseContrroller;
 

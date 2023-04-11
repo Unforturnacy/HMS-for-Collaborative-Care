@@ -1,7 +1,4 @@
 package InventoryManagement;
-
-
-import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 

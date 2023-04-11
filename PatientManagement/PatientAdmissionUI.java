@@ -401,7 +401,7 @@ public class PatientAdmissionUI {
         symptoms.setFont(new Font("Serif", Font.PLAIN, 17));
         patientinfo.add(symptoms);
 
-        String groupapp[]={"PENDING"}; 
+        String groupapp[]={"PENDING", "ARRIVED", "NOARRIVAL", "FULFILLED"}; 
         symptomsinput=new JComboBox(groupapp);
 
         symptomsinput.setBounds(110,basei + blah2*5, 230, 30);

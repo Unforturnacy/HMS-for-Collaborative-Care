@@ -49,6 +49,15 @@ public class patient {
             case "pending":
                 this.app = Appointment.PENDING;
                 break;
+            case "arrived":
+                this.app = Appointment.ARRIVED;
+                break;
+            case "noarrival":
+                this.app = Appointment.NOARRIVAL;
+                break;
+            case "fulfilled":
+                this.app = Appointment.FULFILLED;
+                break;
             default:
              this.app = Appointment.BOOKED;
         }
