@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import UserInteraction.*;
+
 import javax.swing.JPanel;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -34,13 +34,16 @@ import javax.swing.border.LineBorder;
 
 import com.mysql.cj.x.protobuf.MysqlxCrud.Collection;
 
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.font.TextAttribute;
 import java.lang.ModuleLayer.Controller;
-import ApplicationCore.*;
+import PatientManagement.PatientAdmissionUI;
+import PatientManagement.patient;
+import Storage.DatabaseContrroller;
 
 public class UserLoginUI{
     
@@ -53,12 +56,14 @@ public class UserLoginUI{
     private JFrame frame;
     private UserLoginUI login;
     static Point mouseDownCompCoords;
-    public ArrayList<admin> admins = new ArrayList<admin>();
+    public ArrayList<Receptionist> admins = new ArrayList<Receptionist>();
     public ArrayList<patient> patients = new ArrayList<patient>();
     public ArrayList<patient> revpatients = new ArrayList<patient>();
     private DatabaseContrroller database = new DatabaseContrroller();
+    private String name;
     public UserLoginUI()
     {
+    
         getadmins();
         getPatients();
         login = this;
@@ -343,8 +348,9 @@ public class UserLoginUI{
 
            if(coruse && corpass)
            {
+            name = userl.name;
                login.frame.setVisible(false);
-               new PatientAdmissionUI(login);
+               new PatientAdmissionUI(login, name);
            }
            else
 
@@ -399,6 +405,7 @@ public class UserLoginUI{
          
     }
 
+   
 
 
 }

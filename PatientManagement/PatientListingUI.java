@@ -1,4 +1,5 @@
-package UserInteraction;
+package PatientManagement;
+
 import javax.lang.model.util.ElementScanner14;
 import javax.swing.*;
 import javax.swing.JFormattedTextField.AbstractFormatter;
@@ -9,7 +10,7 @@ import javax.swing.plaf.TableHeaderUI;
 import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.plaf.basic.BasicPanelUI;
 import javax.swing.plaf.metal.MetalBorders.TableHeaderBorder;
-import ApplicationCore.*;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -26,12 +27,10 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
-import ApplicationCore.FilterController;
-import ApplicationCore.Querydetails;
-import ApplicationCore.*;
+import chartGeneration.clientChart;
 import users.*;
 import java.awt.*;
-import UserInteraction.*;
+
 import security.*;
 import java.lang.Object;
 import java.lang.ModuleLayer.Controller;
@@ -115,6 +114,7 @@ public class PatientListingUI extends JPanel{
     protected JPanel listPanel;
     protected boolean onmain = true;
     protected JLabel contact;
+    private JLabel totalLabel;
 
 
 
@@ -255,7 +255,7 @@ public class PatientListingUI extends JPanel{
                if (me.getClickCount() == 2) {     // to detect doble click events
                   JTable target = (JTable)me.getSource();
                   int row = target.getSelectedRow(); // select a row
-                  //createChart(row);
+                  createChart(row);
                }
             }
          });
@@ -282,7 +282,7 @@ public class PatientListingUI extends JPanel{
 
         table3.setShowVerticalLines(false);
         table3.getColumnModel().getColumn(0).setPreferredWidth(1);
-        JLabel totalLabel = new JLabel("Total:"+Integer.toString(entry.patients.size()+1));
+        totalLabel = new JLabel("Total:"+Integer.toString(entry.patients.size()));
         totalLabel.setBounds(100, 62, 100, 40);
         totalLabel.setFont(new Font("Serif", Font.CENTER_BASELINE, 20));
         filterPanel.add(totalLabel);
@@ -317,6 +317,13 @@ public class PatientListingUI extends JPanel{
     setVisible(true);
 
     }
+
+    public void createChart(int row)
+    {
+        System.out.println(row);
+        new clientChart(entry,rec, entry.patients.get(row));
+    }
+
 
     class StyledButtonUI extends BasicButtonUI  {
 
@@ -379,6 +386,7 @@ public class PatientListingUI extends JPanel{
             //DO SOMETHING
             Querydetails qdetails = new Querydetails( (String)valueinput3.getSelectedItem(), (String)valueinput5.getSelectedItem(),valueinput.getText());
             listcontrol.filterResults(qdetails);
+            totalLabel.setText("Total:"+Integer.toString(listcontrol.size));
      
         }
     }

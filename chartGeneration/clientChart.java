@@ -1,3 +1,4 @@
+package chartGeneration;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -17,7 +18,11 @@ import java.awt.event.ActionEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumnModel;
 import javax.swing.text.AttributeSet.ColorAttribute;
+
+import PatientManagement.PatientAdmissionUI;
+import PatientManagement.patient;
 import users.*;
 import security.*;
 import java.lang.Object;
@@ -30,7 +35,7 @@ import java.awt.GridLayout;
 import java.awt.font.*;
 import java.awt.Font;
 
-/* 
+
 public class clientChart {
     private JPanel recepPanel;
     static Point mouseDownCompCoords;
@@ -49,8 +54,8 @@ public class clientChart {
     private JTextField priceinput;
     private JTextField dateinput;
     private JLabel titleinfo;
-    private JTable table;
-    private DefaultTableModel model;
+    public JTable table;
+    public DefaultTableModel model;
     private JPanel listPanel;
     private boolean onmain = true;
     private JPanel chartPanel;
@@ -59,11 +64,15 @@ public class clientChart {
     PatientAdmissionUI rec;
     private int row;
     JFrame frame;
+    public String apt;
+    private chartController controller;
+    public patient pat;
 
-    public clientChart(UserLoginUI listing, PatientAdmissionUI rec,int row )
+    public clientChart(UserLoginUI listing, PatientAdmissionUI rec,patient pat )
     {
+        controller = new chartController(this);
         this.listing = listing;
-        this.row = row;
+        this.pat = pat;
         this.rec = rec;
         frame = new JFrame();
         frame.setBounds(400, 100, 950, 645);
@@ -140,12 +149,12 @@ public class clientChart {
         symp.setBackground(Color.red);
      
 
-        JLabel nameLabel  = new JLabel(listing.patients.get(row).getname().toUpperCase());
+        JLabel nameLabel  = new JLabel(pat.getname().toUpperCase());
         nameLabel.setBounds(345, 35, 1500, 50);
         nameLabel.setFont(new Font("Serif", Font.PLAIN, 30));
         info.add(nameLabel);
         
-        JLabel agegenderLabel  = new JLabel(listing.patients.get(row).getgender().toUpperCase());
+        JLabel agegenderLabel  = new JLabel(pat.getgender().toUpperCase());
         agegenderLabel.setBounds(345, 75, 1500, 50);
         agegenderLabel.setFont(new Font("Serif", Font.BOLD, 15));
         info.add(agegenderLabel);
@@ -155,7 +164,7 @@ public class clientChart {
         doc.setFont(new Font("Serif", Font.BOLD, 15));
         info.add(doc);
 
-        JLabel doc1  = new JLabel("MD, " + listing.patients.get(row).get_docseen().toUpperCase());
+        JLabel doc1  = new JLabel("MD, " + pat.get_docseen().toUpperCase());
         doc1.setBounds(400, 105, 1500, 50);
         doc1.setFont(new Font("Serif", Font.PLAIN, 15));
         info.add(doc1);
@@ -165,7 +174,7 @@ public class clientChart {
         date.setFont(new Font("Serif", Font.BOLD, 15));
         info.add(date);
 
-        JLabel date1  = new JLabel(listing.patients.get(row).get_Date().toUpperCase());
+        JLabel date1  = new JLabel(pat.get_Date().toUpperCase());
         date1.setBounds(440, 170, 1500, 50);
         date1.setFont(new Font("Serif", Font.PLAIN, 15));
         info.add(date1);
@@ -175,7 +184,7 @@ public class clientChart {
         dob.setFont(new Font("Serif", Font.BOLD, 15));
         info.add(dob);
 
-        JLabel dob1  = new JLabel(listing.patients.get(row).getoc().toUpperCase());
+        JLabel dob1  = new JLabel(pat.getoc().toUpperCase());
         dob1.setBounds(440, 140, 1500, 50);
         dob1.setFont(new Font("Serif", Font.PLAIN, 15));
         info.add(dob1);
@@ -185,7 +194,7 @@ public class clientChart {
         phone.setFont(new Font("Serif", Font.BOLD, 15));
         info.add(phone);
 
-        JLabel phone1  = new JLabel(listing.patients.get(row).get_tele().toUpperCase());
+        JLabel phone1  = new JLabel(pat.get_tele().toUpperCase());
         phone1.setBounds(640, 140, 1500, 50);
         phone1.setFont(new Font("Serif", Font.PLAIN, 15));
         info.add(phone1);
@@ -214,53 +223,13 @@ public class clientChart {
             dob1.setFont(dob1.getFont().deriveFont(attributes));
             
         });
-        String[] coloumnNames = {"Sypmtoms"};
-        
-
-         DefaultTableModel model =new DefaultTableModel(coloumnNames, 0) {
-
-            @Override
-            public boolean isCellEditable(int row, int column) {       
-                return false; // or a condition at your choice with row and column
-            }
-         };
-         
-           table = new JTable(model);
-           table.setRowSelectionAllowed(false);
-    
-    
-            JTableHeader header = table.getTableHeader();
-            header.setBorder(null);
-            header.setFont(new Font("Serif", Font.BOLD, 20));
-            header.setBackground(Color.decode("#54aeef"));
-            header.setForeground(Color.WHITE);
-           DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-           centerRenderer.setBorder(null);
-           table.setFont(new Font("Serif", Font.PLAIN, 16));
-         
-            centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-            for (int columnIndex = 0; columnIndex < table.getColumnCount(); columnIndex++)
-            {
-                table.getColumnModel().getColumn(columnIndex).setCellRenderer(centerRenderer);
-            }
-            
-    
-            table.setShowVerticalLines(false);
-    
-   
-   
-       table.setRowHeight(37);
-       table.getTableHeader().setFont(new Font("Serif", Font.BOLD, 17));
-       table.getTableHeader().setPreferredSize(new Dimension(100, 35));
-       table.setPreferredScrollableViewportSize(new Dimension(200, 50));
-       table.setFillsViewportHeight(true);
-       JScrollPane scrollPane = new JScrollPane(table);
-       scrollPane.setBorder(new LineBorder(Color.WHITE, 5));
-
-       symp.add(scrollPane);
+       
+     
        pasapp();
+       controller.loadTable();
+      
 
-        
+
 
         frame.add(chartPanel, BorderLayout.CENTER);
         frame.setUndecorated(true);
@@ -273,18 +242,48 @@ public class clientChart {
 
     public void pasapp()
     {
-        String[] coloumnNames = {"Symptoms"};
+        String[] coloumnNames = {"Past Visit", "Details", "Medication/Treatment"};
         
 
        model = new DefaultTableModel(coloumnNames, 0) {
 
-            @Override
-            public boolean isCellEditable(int row, int column) {       
-                return false; // or a condition at your choice with row and column
-            }
+        @Override
+        public boolean isCellEditable(int row, int column) {    
+           if (column == 1 || column == 2 )
+           {
+               return true; // or a condition at your choice with row and column
+           }
+           return false;
+       
+       }
+
+       public void setValueAt(Object value, int row, int col)
+                {
+                    if(col == 1)
+                    {
+                        apt  = getval(row, 0);
+                        controller.updateRemarks(value.toString());
+                        updateSuccesful();
+                        
+                 
+                    }
+
+                    if(col == 2)
+                    {
+                        apt  = getval(row, 0);
+                        controller.updatTreatment(value.toString());
+                        updateSuccesful();
+                        
+                 
+                    }
+                    model.setRowCount(0);
+                    controller.loadTable();
+                }
          };
          
            table = new JTable(model);
+           System.out.println("null");
+          
            table.setRowSelectionAllowed(false);
     
     
@@ -293,6 +292,7 @@ public class clientChart {
             header.setFont(new Font("Serif", Font.BOLD, 20));
             header.setBackground(Color.decode("#54aeef"));
             header.setForeground(Color.WHITE);
+            header.setPreferredSize(new Dimension(100, 35));
            DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
            centerRenderer.setBorder(null);
            table.setFont(new Font("Serif", Font.PLAIN, 16));
@@ -306,19 +306,26 @@ public class clientChart {
     
             table.setShowVerticalLines(false);
     
-            addToTable(listing.patients.get(row));
+     
     
    
        table.setRowHeight(37);
        table.getTableHeader().setFont(new Font("Serif", Font.BOLD, 17));
-       table.getTableHeader().setPreferredSize(new Dimension(100, 35));
+       //table.getTableHeader().setPreferredSize(new Dimension(100, 35));
+       
        table.setPreferredScrollableViewportSize(new Dimension(200, 50));
        table.setFillsViewportHeight(true);
        JScrollPane scrollPane = new JScrollPane(table);
        scrollPane.setBorder(new LineBorder(Color.decode("#54aeef"), 5));
 
-       pastap.add(scrollPane);
-       
+       pastap.add(scrollPane);  
+    }
+
+    public void updateSuccesful()
+    {
+        JFrame f = new JFrame();
+        JOptionPane.showMessageDialog(f, "Update Successful");
+
     }
 
     public class StyledPanelUI extends BasicPanelUI  {
@@ -349,11 +356,11 @@ public class clientChart {
         }
     }
 
-    private void addToTable(patient p)
+    private String getval(int row, int col)
     {
-        model.setRowCount(0);
-        String[] item = p.get_sym();
-        model.addRow(item);
+        String hi=  table.getModel().getValueAt(row, col).toString() ;
+     
+    return hi;
 
     }
 
@@ -369,4 +376,4 @@ public class clientChart {
 
     
 }
-*/
+

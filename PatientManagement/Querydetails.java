@@ -1,4 +1,5 @@
-package ApplicationCore;
+package PatientManagement;
+
 public class Querydetails {
     private String sign;
     private String field;

@@ -1,4 +1,5 @@
-package UserInteraction;
+package PatientManagement;
+
 
 import javax.lang.model.util.ElementScanner14;
 import javax.swing.*;
@@ -10,10 +11,10 @@ import javax.swing.plaf.TableHeaderUI;
 import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.plaf.basic.BasicPanelUI;
 import javax.swing.plaf.metal.MetalBorders.TableHeaderBorder;
-import ApplicationCore.*;
+
 import users.*;
 import java.awt.*;
-import UserInteraction.*;
+
 
 import security.*;
 import java.awt.event.MouseAdapter;
@@ -30,6 +31,9 @@ import javax.swing.text.AttributeSet.ColorAttribute;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+
+import InventoryManagement.InventoryUI;
+import ReportGeneration.ReportDesigner;
 
 import java.lang.Object;
 import java.lang.ModuleLayer.Controller;
@@ -95,10 +99,11 @@ public class PatientAdmissionUI {
     public JTextField contactinput;
     public JComboBox genderinput;
     public JTextField phoneinput; 
-    public JTextField symptomsinput;
+    public JComboBox symptomsinput;
     public  JComboBox valueinput5;
     public JTextField occinput;
     public JComboBox groupinput;
+    public InventoryUI inv;
     public JTextField relinput ;
     public JComboBox consinput;
     public JTextField priceinput;
@@ -113,6 +118,8 @@ public class PatientAdmissionUI {
     public int please;
     public JPanel listPanel;
     public boolean onmain = true;
+    public boolean onpatda = false;
+    public boolean oneqda = false;
     public JLabel contact;
 
     public PatientListingUI hi;
@@ -126,9 +133,14 @@ public class PatientAdmissionUI {
     public boolean update = false;
     PatientAdmissionUI rec;
     JFrame frame;
+    private JButton admiss;
+    private JButton inventory ;
     public AdmissionController controller;
-    public PatientAdmissionUI(UserLoginUI entry)
+    private JButton listingbase;
+    public String recepname;
+    public PatientAdmissionUI(UserLoginUI entry,String recepname)
     {
+        this.recepname =recepname;
         this.entry  = entry;
         this.rec = this;
         controller = new AdmissionController(rec);
@@ -239,7 +251,7 @@ public class PatientAdmissionUI {
         upperbutton.setBackground(Color.WHITE);
         frame.add(upperbutton);
 
-        JButton admiss = new JButton("Patient Admission");
+        admiss = new JButton("Patient Admission");
         admiss.setBounds(0, 0, 200, 45);
         admiss.setBackground(Color.decode("#54aeef"));
         admiss.setFont(new Font("Serif", Font.BOLD, 18));
@@ -251,7 +263,7 @@ public class PatientAdmissionUI {
 
         admiss.addActionListener(new admissButtonListener());
 
-        JButton listingbase = new JButton("Patient Listing");
+        listingbase = new JButton("Patient Listing");
         listingbase.setBounds(200, 0, 200, 45);
         listingbase.setFont(new Font("Serif", Font.BOLD, 18));
         
@@ -264,18 +276,19 @@ public class PatientAdmissionUI {
 
         listingbase.addActionListener(new listingButtonListener());
 
-        JButton dailyacc = new JButton("Inventory");
-        dailyacc.setBounds(400, 0, 200, 45);
-        dailyacc.setFont(new Font("Serif", Font.BOLD, 18));
+        inventory = new JButton("Inventory");
+        inventory.setBounds(400, 0, 200, 45);
+        inventory.setFont(new Font("Serif", Font.BOLD, 18));
         
-        dailyacc.setBorderPainted(false);
-        dailyacc.setFocusPainted(false);
-        dailyacc.setForeground(Color.decode("#54aeef"));
-        dailyacc.setUI(new StyledButtonUI());
-        dailyacc.setBackground(Color.WHITE);
-        upperbutton.add(dailyacc);
+        inventory.setBorderPainted(false);
+        inventory.setFocusPainted(false);
+        inventory.setForeground(Color.decode("#54aeef"));
+        inventory.setUI(new StyledButtonUI());
+        inventory.setBackground(Color.WHITE);
+        upperbutton.add(inventory);
+        inventory.addActionListener(new invButtonListener());
 
-        JButton feedback = new JButton("Submit Feedback");
+        JButton feedback = new JButton("Generate Report");
         feedback.setBounds(1299, 0, 200, 45);
         feedback.setFont(new Font("Serif", Font.BOLD, 18));
         feedback.setBorderPainted(false);
@@ -300,7 +313,7 @@ public class PatientAdmissionUI {
         patientinfo.add(patientinfotit);
 
         JButton newb = new JButton("New");
-        newb.setBounds(550, 10, 105, 39);
+        newb.setBounds(600, 10, 105, 39);
         newb.setBackground(Color.decode("#F74548"));
         newb.setFont(new Font("Serif", Font.BOLD, 18));
         newb.setBorderPainted(false);
@@ -383,16 +396,24 @@ public class PatientAdmissionUI {
         phoneinput.setFont(new Font("Serif", Font.PLAIN, 17));
         patientinfo.add(phoneinput);
 
-        JLabel symptoms  = new JLabel("Symptoms:");
+        JLabel symptoms  = new JLabel("Appointment:");
         symptoms.setBounds(10, baset+blah*5, 300, 50);
         symptoms.setFont(new Font("Serif", Font.PLAIN, 17));
         patientinfo.add(symptoms);
 
-        symptomsinput  = new JTextField();
-        symptomsinput.setBounds(90,basei + blah2*5, 250, 30);
+        String groupapp[]={"PENDING"}; 
+        symptomsinput=new JComboBox(groupapp);
+
+        symptomsinput.setBounds(110,basei + blah2*5, 230, 30);
         symptomsinput.setFont(new Font("Serif", Font.PLAIN, 17));
         patientinfo.add(symptomsinput);
-
+        //symptomsinput.setHorizontalAlignment(JComboBox.CENTER_ALIGNMENT);
+        //symptomsinput.setText("Pending");
+        symptomsinput.setSelectedItem("PENDING");
+        symptomsinput.setEnabled(false);
+        DefaultListCellRenderer dlcr = new DefaultListCellRenderer(); 
+        dlcr.setHorizontalAlignment(DefaultListCellRenderer.CENTER); 
+        symptomsinput.setRenderer(dlcr); 
 
         
 
@@ -414,7 +435,7 @@ public class PatientAdmissionUI {
         group.setFont(new Font("Serif", Font.PLAIN, 17));
         patientinfo.add(group);
 
-        String groupw[]={" ","A","B", "AB", "O"};        
+        String groupw[]={" ","A+","B+", "AB+", "O-", "A-","B-", "AB-", "O+"};        
         groupinput=new JComboBox(groupw);
         groupinput.setBackground(Color.WHITE);
         groupinput.setRenderer(listRenderer); 
@@ -447,7 +468,7 @@ public class PatientAdmissionUI {
         cons.setFont(new Font("Serif", Font.PLAIN, 17));
         patientinfo.add(cons);
 
-        String conss[]={" ","MS. SIMONS","MS. WILSON"};        
+        String conss[]={" ","MR. HART","MR. DOUGLAS"};        
         consinput=new JComboBox(conss);
         consinput.setBackground(Color.WHITE);
         consinput.setRenderer(listRenderer);
@@ -479,7 +500,7 @@ public class PatientAdmissionUI {
         datePicker.setBounds(480,basei +blah2*5, 250, 30);
         patientinfo.add(datePicker);
 
-        nameinput.addFocusListener(new FocusListener() {
+        iDinput.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
                  
@@ -487,20 +508,28 @@ public class PatientAdmissionUI {
             }
             @Override
             public void focusLost(FocusEvent e) {
+                iDinput.setEnabled(false);
+                int id = Integer.parseInt(iDinput.getText());
                 for(patient pat:entry.patients)
                 {
-                    if (pat.getname().equals(nameinput.getText()))
+                    if (pat.getid() == id)
                     {
-                    
+                        nameinput.setText(pat.getname());
                         contactinput.setText(pat.email());
                         genderinput.setSelectedItem(pat.getgender());
                         phoneinput.setText(pat.get_tele());
-                        symptomsinput.setText(pat.get_symm());
+                        symptomsinput.setSelectedItem(pat.get_app());
                         occinput.setText(pat.getoc());
                         groupinput.setSelectedItem(pat.get_group());
                         relinput.setText(pat.get_address());
                         consinput.setSelectedItem(pat.get_docseen());
                         priceinput.setText(Double.toString(pat.get_Paid()));
+                        String[] date = pat.get_Date().split("/");
+                        datePicker.getModel().setDate(Integer.parseInt(date[2]),Integer.parseInt( date[0]),Integer.parseInt( date[1]));
+                        datePicker.getModel().setSelected(true);
+                        
+                
+
                         update = true;
                         please = pat.getid();
                     }
@@ -531,6 +560,18 @@ public class PatientAdmissionUI {
 
         ButtonListener listener = new ButtonListener();
         prev.addActionListener(listener);
+
+        JButton upd = new JButton("Update");
+        upd.setBounds(470, 10, 105, 39);
+        upd.setBackground(Color.decode("#825ecd"));
+        upd.setFont(new Font("Serif", Font.BOLD, 18));
+        upd.setBorderPainted(false);
+        upd.setFocusPainted(false);
+        upd.setForeground(Color.WHITE);
+        upd.setUI(new StyledButtonUI());
+        patientinfo.add(upd);
+
+        upd.addActionListener(new listenerupd());
 
         
 
@@ -575,7 +616,7 @@ public class PatientAdmissionUI {
         tabletit.setFont(new Font("Serif", Font.BOLD, 20));
         tbl2.add(tabletit);
         tbl2.add(tbl);
-        String[] coloumnNames = {"ID", "Name", "Contact", "Address", "Doctor", "Date"};
+        String[] coloumnNames = {"ID", "Name", "Contact", "Appointment", "Doctor", "Appointment Date"};
         String[] item={"1","Teric Simons","3","4","5","6"};
 
     
@@ -617,7 +658,7 @@ public class PatientAdmissionUI {
 
         del.setFont(del.getFont().deriveFont(attributes));
         admiss.setFont(del.getFont().deriveFont(attributes));
-        dailyacc.setFont(del.getFont().deriveFont(attributes));
+        inventory.setFont(del.getFont().deriveFont(attributes));
         feedback.setFont(del.getFont().deriveFont(attributes));
         newb.setFont(del.getFont().deriveFont(attributes));
         patientinfotit.setFont(del.getFont().deriveFont(attributes));
@@ -656,10 +697,13 @@ public class PatientAdmissionUI {
         tpanel.setUI(new StyledPanelUI());
    
         hi = new PatientListingUI(entry);
+        inv = new InventoryUI();
+        inv.setVisible(false);
 
         hi.setVisible(false);
 
         frame.add(hi);
+        frame.add(inv);
         frame.add(recepPanel, BorderLayout.CENTER);
         frame.setUndecorated(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -695,7 +739,7 @@ public class PatientAdmissionUI {
     {
         String name= p.getname();
         System.out.println(p.get_Date());
-        String[] item={Integer.toString(p.getid()),""+ name, ""+ p.get_tele(),""+p.get_address(),""+p.get_docseen(),""+p.get_Date()};
+        String[] item={Integer.toString(p.getid()),""+ name, ""+ p.get_tele(),""+p.get_app(),""+p.get_docseen(),""+p.get_Date()};
         model.addRow(item);        
 
     }
@@ -726,10 +770,30 @@ public class PatientAdmissionUI {
         {
          
             onmain =false;
+            onpatda  =true;
+            oneqda = false;
             hideEntry();
             entry.getPatients();
             hi.listcontrol.displayResults(entry.givedir());
-            hi.setVisible(true);
+            
+        
+        }
+
+    }
+
+    public class invButtonListener implements ActionListener
+    {
+        public void actionPerformed(ActionEvent e)
+        {
+         
+            onmain =false;
+            onpatda  =false;
+            oneqda = true;
+
+            hideEntry();
+            
+
+
             
         
         }
@@ -742,9 +806,11 @@ public class PatientAdmissionUI {
         {
             
             onmain =true;
+            onpatda  =false;
+            oneqda = false;
             hideEntry();
+      
 
-            hi.setVisible(false);
         }
 
     }
@@ -753,7 +819,19 @@ public class PatientAdmissionUI {
     {
         public void actionPerformed(ActionEvent e)
         {
-           //feedback bah = new feedback();
+
+           
+    
+           int n = JOptionPane.showConfirmDialog(
+            null,
+            "Report Generated\nDownload?",
+            "Report",
+            JOptionPane.YES_NO_OPTION);
+
+            if(n == JOptionPane.YES_OPTION)
+            {
+                new ReportDesigner();
+            }
         }
 
     }
@@ -763,12 +841,7 @@ public class PatientAdmissionUI {
        
     }
 
-    public void createChart(int row)
-    {
-        System.out.println(row);
-        //new clientChart(entry,rec,row);
-    }
-
+   
     public void hideEntry()
     {
         if(onmain)
@@ -776,12 +849,47 @@ public class PatientAdmissionUI {
             patientinfo.setVisible(true);
             chart.setVisible(true);
             tbl2.setVisible(true);
+            hi.setVisible(false);
+            inv.setVisible(false);
+            admiss.setBackground(Color.decode("#54aeef"));
+            admiss.setForeground(Color.WHITE);
+            listingbase.setBackground(Color.WHITE);
+            listingbase.setForeground(Color.decode("#54aeef"));
+            inventory.setBackground(Color.WHITE);
+            inventory.setForeground(Color.decode("#54aeef"));
         }
-        else
+        if(onpatda)
         {
+            hi.setVisible(true);
             patientinfo.setVisible(false);
+            inv.setVisible(false);
             chart.setVisible(false);
             tbl2.setVisible(false);
+            listingbase.setBackground(Color.decode("#54aeef"));
+            listingbase.setForeground(Color.WHITE);
+            inventory.setBackground(Color.WHITE);
+            inventory.setForeground(Color.decode("#54aeef"));
+            admiss.setBackground(Color.WHITE);
+            admiss.setForeground(Color.decode("#54aeef"));
+
+        }
+
+        if(oneqda)
+        {
+            hi.setVisible(false);
+            patientinfo.setVisible(false);
+            inv.setVisible(true);
+            chart.setVisible(false);
+            tbl2.setVisible(false);
+
+            inventory.setBackground(Color.decode("#54aeef"));
+            inventory.setForeground(Color.WHITE);
+            listingbase.setBackground(Color.WHITE);
+            listingbase.setForeground(Color.decode("#54aeef"));
+            admiss.setBackground(Color.WHITE);
+            admiss.setForeground(Color.decode("#54aeef"));
+
+            inv.updateTable();
         }
 
     
@@ -886,6 +994,17 @@ public class PatientAdmissionUI {
         public void actionPerformed(ActionEvent e) {
             //DO SOMETHING
             controller.clearInput();
+            symptomsinput.setSelectedItem("PENDING");
+            symptomsinput.setEnabled(false);
+        }
+    }
+
+    private class listenerupd implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //DO SOMETHING
+            iDinput.setEnabled(true);
+            symptomsinput.setEnabled(true);
         }
     }
 
@@ -893,6 +1012,7 @@ public class PatientAdmissionUI {
         @Override
         public void actionPerformed(ActionEvent e) {
            boolean valid = controller.validateDetails();
+           boolean update = false;
            if(!valid)
            {
                 errorMessage();
@@ -900,8 +1020,30 @@ public class PatientAdmissionUI {
            else
            {
             patient patient = controller.CreateNewPatient();
-            controller.savetoDatabase(patient);
-            saveSuccesful();
+
+            entry.getPatients();
+            for(patient pat:entry.patients)
+            {
+                if (pat.getid() == patient.getid())
+                {
+                    update = true;
+                    break;
+                }
+            }
+            if(!update)
+            {
+                controller.savetoDatabase(patient);
+                saveSuccesful();
+            }
+            else
+            {
+                controller.updateDatabase(patient);
+                updateSuccesful();
+            }
+            controller.clearInput();
+            symptomsinput.setSelectedItem("PENDING");
+            symptomsinput.setEnabled(false);
+    
            }
 
         }
@@ -916,10 +1058,22 @@ public class PatientAdmissionUI {
 
     public void saveSuccesful()
     {
+        iDinput.setText(Integer.toString(entry.getlastID()+1));
+        iDinput.setEnabled(false);
         JFrame f = new JFrame();
         JOptionPane.showMessageDialog(f, "Save Successful");
 
     }
+
+    public void updateSuccesful()
+    {
+      
+    
+        JFrame f = new JFrame();
+        JOptionPane.showMessageDialog(f, "Update Successful");
+
+    }
+
 
     public void updatePatient(int please)
     {
@@ -930,7 +1084,7 @@ public class PatientAdmissionUI {
         String contact = contactinput.getText();
         String gender = String.valueOf(genderinput.getSelectedItem());
         String phone = phoneinput.getText();
-        String sympton = symptomsinput.getText();
+        String sympton = symptomsinput.getSelectedItem().toString();
         String occ = occinput.getText();
         String blood = String.valueOf(groupinput.getSelectedItem());
         String religion = relinput.getText();

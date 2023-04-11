@@ -1,5 +1,5 @@
+package PatientManagement;
 
-package ApplicationCore;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import users.*;
-import UserInteraction.*;
 import security.*;
 import javax.swing.JPanel;
 import java.awt.event.ActionListener;
@@ -33,6 +32,8 @@ import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
 import com.mysql.cj.x.protobuf.MysqlxCrud.Collection;
+
+import Storage.DatabaseContrroller;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -57,7 +58,7 @@ public class AdmissionController {
             hi.contactinput.setText("");
             hi.genderinput.setSelectedItem(" ");
             hi.phoneinput.setText("");
-            hi.symptomsinput.setText("");
+    
             hi.occinput.setText("");
             hi.groupinput.setSelectedItem(" ");
             hi.relinput.setText("");
@@ -102,7 +103,7 @@ public class AdmissionController {
                 isint = false;
             }
 
-            else if((hi.symptomsinput.getText().isEmpty()) || (hi.symptomsinput.getText() == null))
+            else if(String.valueOf(hi.symptomsinput.getSelectedItem()).isEmpty())
             {
                 isint = false;
             }
@@ -141,18 +142,19 @@ public class AdmissionController {
     
         public patient CreateNewPatient()
         {
+            Integer id = Integer.parseInt(hi.iDinput.getText());
             String name = hi.nameinput.getText();
             String contact = hi.contactinput.getText();
             String gender = String.valueOf(hi.genderinput.getSelectedItem());
             String phone = hi.phoneinput.getText();
-            String sympton = hi.symptomsinput.getText();
+            String sympton = hi.symptomsinput.getSelectedItem().toString();
             String occ = hi.occinput.getText();
             String blood = String.valueOf(hi.groupinput.getSelectedItem());
-            String religion = hi.relinput.getText();
+            String address = hi.relinput.getText();
             String doctor = String.valueOf(hi.consinput.getSelectedItem());
             double price =Double.parseDouble(hi.priceinput.getText());
             String date = hi.datePicker.getModel().getMonth()+1+"/"+ hi.datePicker.getModel().getDay()+"/"+ hi.datePicker.getModel().getYear();
-            patient patient = new patient(0, name, occ, phone, gender, religion, sympton, blood, doctor, occ, price, date);
+            patient patient = new patient(id, name, occ, contact, gender, phone, sympton, blood, address, doctor, price, date, hi.recepname);
             return patient;
         }
 
@@ -165,7 +167,7 @@ public class AdmissionController {
         String contact = hi.contactinput.getText();
         String gender = String.valueOf(hi.genderinput.getSelectedItem());
         String phone = hi.phoneinput.getText();
-        String sympton = hi.symptomsinput.getText();
+        String sympton = hi.symptomsinput.getSelectedItem().toString();
         String occ = hi.occinput.getText();
         String blood = String.valueOf(hi.groupinput.getSelectedItem());
         String religion = hi.relinput.getText();
@@ -218,10 +220,30 @@ public class AdmissionController {
 
         hi.entry.getPatients();
         updateTable(hi.table);
+
  
 
     }
 
+    public void updateDatabase(patient Patient)
+    {
+        database.update_patient(Patient);
+        hi.entry.getPatients();
+        updateTable(hi.table);
+    }
+
+
+    public int getlastID()
+    {
+        try{
+            return hi.entry.patients.get(0).getid();
+        } catch(Exception ex)
+        {
+            return -1;
+        }
+         
+         
+    }
     public void  updateTable(JTable table)
     {
 
@@ -247,7 +269,7 @@ public class AdmissionController {
         String contact = hi.contactinput.getText();
         String gender = String.valueOf(hi.genderinput.getSelectedItem());
         String phone = hi.phoneinput.getText();
-        String sympton = hi.symptomsinput.getText();
+        String sympton = hi.symptomsinput.getSelectedItem().toString();
         String occ = hi.occinput.getText();
         String blood = String.valueOf(hi.groupinput.getSelectedItem());
         String religion = hi.relinput.getText();
