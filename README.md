@@ -18,10 +18,11 @@ Teric Simons
 <br />
 Ranaldo Green
 <br />
-Rasheeda Francis
+Rayon Hart
 <br />
-Kareem Pingue
+Christian Douglas
 <br />
-Kemar Wilson
+Matthew Grant
 <br />
-
+Keanu Gaynor
+<br />
